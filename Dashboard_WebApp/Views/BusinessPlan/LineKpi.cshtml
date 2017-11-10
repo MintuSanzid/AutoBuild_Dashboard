@@ -1,0 +1,233 @@
+﻿
+@{
+    ViewBag.Title = "Bitopi Group";
+    Layout = "~/Views/Shared/_LayoutConfigurationHRF.cshtml";
+}
+
+<script src="~/Scripts/fusioncharts.js"></script>
+<script src="~/Scripts/angular.js"></script>
+<script src="~/Scripts/angular-fusioncharts.min.js"></script>
+<script src="~/Content/Configuration/js/lodash.core.js"></script>
+<script src="~/Content/Configuration/js/lodash.fp.js"></script>
+<script src="~/Content/Configuration/js/lodash.js"></script>
+<script src="~/Content/Configuration/js/mapping.fp.js"></script>
+<script src="~/Content/Configuration/js/angularjs-dropdown-multiselect.js"></script>
+
+
+
+<script type="text/javascript" src="~/Scripts/ngDialog.js"></script>
+<link href="~/Content/ngDialog.css" rel="stylesheet" >
+<link rel="stylesheet" href="~/Content/ngDialog-theme-default.css">
+
+<script src="~/Scripts/angular-resource.js"></script>
+<script src="~/Scripts/angular-route.js"></script>
+<script src="~/App/BusinessPlanLineKPICtrl.js"></script>
+
+<link href="~/Content/Configuration/css/style.css" rel="stylesheet" />
+<link href="http://fonts.googleapis.com/css?family=News+Cycle:400,700" rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+
+
+
+<br />
+<div class="body-content">
+    <div ng-app="appDashboard" ng-controller="BusinessPlanLineKPIController" class="container-dash">
+        <h2 class="" style="height: 75px;">
+            <span>
+                <div class="form-group col-md-3">
+                    <label for=""> Company Name </label>
+                    <div ng-dropdown-multiselect="" options="example1data" selected-model="CompanyCode"></div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for=""> From Date </label>
+                    <input ng-model="FromDate" type="Date" class="form-control" />
+                </div>
+                <div class="form-group col-md-3">
+                    <label for=""> To Date </label>
+                    <input ng-model="ToDate" type="Date" class="form-control" />
+                </div>
+                <div class="form-group col-md-3">
+                    <label> Line KPI MIS Report </label>
+                    <button class="btn btn-info col-md-12" ng-click="LoadLineKPIData()" style="margin: 0px;">
+                        <i class="glyphicon glyphicon-arrow-down"></i>
+                    </button>
+                </div>
+            </span>
+        </h2>
+        <style>
+            a:hover {
+                background-color: green;
+                font-size: 2rem;
+            }
+
+        </style>
+        <div class="">
+            <span class="">
+                @*<label class="h4"> Line KPI MIS Report </label>*@
+                <div class="row content-area sample-show-hide" ng-show="checked">
+                    @*<div fusioncharts width="100%" height="400" type="column2d" dataSource="{{myDataSource}}">*@
+                    <div style="float: left" fusioncharts width="58%" height="200" type="mscombi2d" chart="{{attrs}}" categories="{{categories}}" dataset="{{dataset}}"></div>
+                    <div style="float: left; padding-left: 15px" fusioncharts width="40%" height="200" type="mscombi2d" chart="{{attrs}}" categories="{{categories}}" dataset="{{dataset}}"></div>
+                </div>
+                <button class="btn btn-link pull-right" ng-click="exportToExcel('#example')">
+                    <span class="glyphicon glyphicon-share"></span> Export to Excel
+                </button>
+                <table Id="example" class="responsive-table table table-condensed table-striped" style="border: 1px solid white;">
+                    <thead>
+                        <tr>
+                            <th colspan="5" class="text-center white"> </th>
+                            <th colspan="7" class="text-center blue"> STD </th>
+                            <th colspan="6" class="text-center yellow"> PLAN </th>
+                            <th colspan="6" class="text-center white"> Actual </th>
+                            <th colspan="3" class="text-center orange"> CM </th>
+                            <th colspan="3" class="text-center maroon"> EF </th>
+                            <th colspan="3" class="text-center orange"> MP </th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <th class="white-th"> Day </th>
+                        <th class="white-th"> Month </th>
+                        <th class="white-th"> Wk </th>
+                        <th class="white-th"> Year </th>
+                        <th class="white-th"> Flag </th>
+
+                        <th class="blue-th"> Company </th>
+                        <th class="blue-th"> Unit </th>
+                        <th class="blue-th"> MP </th>
+                        <th class="blue-th"> CM </th>
+                        <th class="blue-th"> EF </th>
+                        <th class="blue-th"> SAM </th>
+                        <th class="blue-th"> QTY </th>
+
+                        <th class="yellow-th"> PlanId </th>
+                        <th class="yellow-th"> MP </th>
+                        <th class="yellow-th"> CM </th>
+                        <th class="yellow-th"> EF </th>
+                        <th class="yellow-th"> SAM </th>
+                        <th class="yellow-th"> QTY </th>
+
+                        <th class="white-th"> ActualId </th>
+                        <th class="white-th"> MP </th>
+                        <th class="white-th"> CM </th>
+                        <th class="white-th"> EF </th>
+                        <th class="white-th"> SAM </th>
+                        <th class="white-th"> QTY </th>
+
+                        <th class="orange-th"> StdVsPlan </th>
+                        <th class="orange-th"> PlanVsActual </th>
+                        <th class="orange-th"> StdVsActual </th>
+
+                        <th class="maroon-th"> StdVsPlan </th>
+                        <th class="maroon-th"> PlanVsActual </th>
+                        <th class="maroon-th"> StdVsActual </th>
+
+                        <th class="orange-th"> StdVsPlan </th>
+                        <th class="orange-th"> PlanVsActual </th>
+                        <th class="orange-th"> StdVsActual </th>
+
+                    </tr>
+
+                    <tr ng-repeat="lk in lineKpiData">
+                        <td class="white-th" ng-click="ShawLineKPIChanrt(lk)"><a> <strong>{{lk.EeveryDay | date:'MM/dd/yyyy'}} </strong></a></td>
+                        <td class="white-th"> <strong> {{lk.MonthName}} </strong></td>
+                        <td class="white-th"> <strong> {{lk.WeekNo}} </strong></td>
+                        <td class="white-th"> <strong> {{lk.YearNo}} </strong></td>
+                        <td class="white-th"> <strong> {{lk.FpFlag}} </strong></td>
+
+                        <td class="blue-th"> <strong>{{lk.CompanyName}} </strong></td>
+                        <td class="blue-th"> <strong>{{lk.UnitName}} </strong></td>
+                        <td class="blue-th"> <strong>{{lk.StdMp}} </strong></td>
+                        <td class="blue-th"> <strong>{{lk.StdCm}} </strong></td>
+                        <td class="blue-th"> <strong>{{lk.StdEf}} </strong></td>
+                        <td class="blue-th"> <strong>{{lk.StdSam}} </strong></td>
+                        <td class="blue-th"> <strong>{{lk.StdQty}} </strong></td>
+
+                        <td class="yellow-th"> <strong>{{lk.PlanId}} </strong></td>
+                        <td class="yellow-th"> <strong>{{lk.PlanMp}} </strong></td>
+                        <td class="yellow-th"> <strong>{{lk.PlanCm}} </strong></td>
+                        <td class="yellow-th"> <strong>{{lk.PlanEf}} </strong></td>
+                        <td class="yellow-th"> <strong>{{lk.PlanSam}} </strong></td>
+                        <td class="yellow-th"> <strong>{{lk.PlanQty}} </strong></td>
+
+                        <td class="white-th"> <strong>{{lk.ActualId}} </strong></td>
+                        <td class="white-th"> <strong>{{lk.ActualMp}} </strong></td>
+                        <td class="white-th"> <strong>{{lk.ActualCm}} </strong></td>
+                        <td class="white-th"> <strong>{{lk.ActualEf}} </strong></td>
+                        <td class="white-th"> <strong>{{lk.ActualSam}} </strong></td>
+                        <td class="white-th"> <strong>{{lk.ActualQty}} </strong></td>
+
+                        <td class="orange-th"> <strong>{{lk.CmStdVsPlan}} </strong></td>
+                        <td class="orange-th"> <strong>{{lk.CmPlanVsActual | number : 2}} </strong></td>
+                        <td class="orange-th"> <strong>{{lk.CmStdVsActual}}</strong></td>
+
+                        <td class="maroon-th"> <strong>{{lk.EStdVsPlan}}</strong></td>
+                        <td class="maroon-th"> <strong>{{lk.EPlanVsActual }}</strong></td>
+                        <td class="maroon-th"> <strong>{{lk.EStdVsActual}}</strong></td>
+
+                        <td class="orange-th"> <strong>{{lk.MpStdVsPlan}}</strong></td>
+                        <td class="orange-th"> <strong>{{lk.MpPlanVsActual}}</strong></td>
+                        <td class="orange-th"> <strong>{{lk.MpStdVsActual}}</strong></td>
+
+                    </tr>
+                </table>
+
+                @*<span class="">
+                        <label>
+                            <input type="radio" ng-model="color.name" value="ddmwise" ng-click="ShowBP_CapacityDetails($event)"> DMM Wise Details
+                        </label>
+                        <span class="col-md-2">
+                            <label class="">
+                                <input type="radio" ng-model="color.name" value="buyerwise" ng-click="ShowBP_CapacityDetails($event)"> Buyer Wise Details
+                            </label>
+                        </span>
+                    </span>
+                    <span class="warning col-md-offset-1"> {{Message}} </span>*@
+            </span>
+            <br />
+
+        </div>
+
+        @* -------------- Open *@
+        <script type="text/ng-template" id="BP_CapacityDetails">
+            <table style="margin-top: 0px !important;" class="table table-condensed table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <label> Capacity Items </label>
+                        <th class="h6"> Capacity Details </th>
+                        <th class="h6" ng-repeat="m in SetMonths">
+                            <label id="{{$index+1-1}}Month" value="{{m}}" for="">{{m}} </label>
+                        </th>
+                    </tr>
+                </thead>
+                <thead>
+                    <tr ng-repeat="b in Capacities">
+                        <td>
+                            {{b.BusinessName}}
+                            @* //<a id="{{b.BusinessName}}" title="{{b.BusinessName}}" ng-click="OpenngDiologBP_Capacity($event)" class="btn btn-xs">  </a>*@
+                        </td>
+                        <td>{{b.Month1}}</td>
+                        <td>{{b.Month2}}</td>
+                        <td>{{b.Month3}}</td>
+                        <td>{{b.Month4}}</td>
+                        <td>{{b.Month5}}</td>
+                        <td>{{b.Month6}}</td>
+                        <td>{{b.Month7}}</td>
+                        <td>{{b.Month8}}</td>
+                        <td>{{b.Month9}}</td>
+                        <td>{{b.Month10}}</td>
+                        <td>{{b.Month11}}</td>
+                        <td>{{b.Month12}}</td>
+                    </tr>
+                </thead>
+            </table>
+        </script>
+        @*--------------- Close*@
+        <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;top: 0px; width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); z-index: 30001; opacity: .8; filter: alpha(opacity=70);display:none">
+            <p style="position: absolute; top: 30%; left: 45%; color: White;">
+                Loading, please wait...<img src="~/Content/Configuration/image/ajax-loading.gif" alt="Image Loading">
+        </div>
+    </div>
+
+</div>
+
+<script src="~/Content/Configuration/js/index.js"></script>

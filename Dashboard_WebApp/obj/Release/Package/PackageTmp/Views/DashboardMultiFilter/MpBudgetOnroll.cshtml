@@ -1,0 +1,508 @@
+﻿
+
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_LayoutConfigurationHRF.cshtml";
+}
+
+<script src="~/Content/FusionCharts/fusioncharts.js"></script>
+@*<script src="~/Content/FusionCharts/fusioncharts.widgets.js"></script>*@
+<script src="~/Content/FusionCharts/fusioncharts.charts.js"></script>
+<script src="~/Content/FusionCharts/fusioncharts.theme.fint.js"></script>
+
+<script src="~/Scripts/angular.js"></script>
+<script src="~/Scripts/angular-fusioncharts.min.js"></script>
+<script src="~/Content/Configuration/js/lodash.core.js"></script>
+<script src="~/Content/Configuration/js/lodash.fp.js"></script>
+<script src="~/Content/Configuration/js/lodash.js"></script>
+<script src="~/Content/Configuration/js/mapping.fp.js"></script>
+<script src="~/Content/Configuration/js/angularjs-dropdown-multiselect.js"></script>
+
+
+<script type="text/javascript" src="~/Scripts/ngDialog.js"></script>
+<link href="~/Content/ngDialog.css" rel="stylesheet">
+<link rel="stylesheet" href="~/Content/ngDialog-theme-default.css">
+
+<script src="~/Scripts/angular-resource.js"></script>
+<script src="~/Scripts/angular-route.js"></script>
+<script src="~/App/DashboardMultiFilterController.js"></script>
+
+<link href="~/Content/Configuration/css/style.css" rel="stylesheet" />
+<link href="http://fonts.googleapis.com/css?family=News+Cycle:400,700" rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+
+
+<link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/css/jquery.dataTables_themeroller.css">
+<link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/jquery.dataTables.min.js"></script>
+<style type="text/css">
+    .multiselect-container {
+        height: 200px;
+        overflow-x: hidden;
+        /*overflow-y: scroll;*/
+    }
+</style>
+<script type="text/javascript">
+    var url = window.location.origin;
+    var calltrue = false;
+    var pie2D;
+    var data2 = [];
+    FusionCharts.ready(function () {
+        if (calltrue === false) {
+            $.ajax({
+                url: url + "/DashboardMultiFilter/GetPeiChartsData",
+                dataType: "json",
+                success: function (data) {
+                    var getReportDataObj = function (data) {
+                        $.each(data, function (key, value) {
+                            var peidata = { label: value.StaffType, value: value.Actual }
+                            data2.push(peidata);
+                        });
+                        setPeiCharts(data2);
+                        setPeiChartsCompany(data2);
+                    };
+                    getReportDataObj(data);
+                },
+                error: function (data) { alert(data.message); }
+            });
+        }
+    });
+
+    ///////////// End of Report ReqDecompositionRate ////////////
+
+    function setPeiCharts(data) {
+        var dataObjectPei = [];
+        var dataSourcePei = {
+            "chart": {
+                "caption": "Manpower Distribution Based on Categories",
+                "subcaption": "BITOPI GROUP",
+                "paletteColors": "#1aaf5d,#d50000,#f2c500,#0075c2,#f45b00",
+                "bgColor": "#ffffff",
+                "numberSuffix": "%",
+                "baseFontSize": '14',
+                "showBorder": "0",
+                "use3DLighting": "0",
+                "showShadow": "1",
+                "enableSmartLabels": "0",
+                "startingAngle": "0",
+                "showPercentValues": "0",
+                "showPercentInTooltip": "0",
+                "decimals": "1",
+                "captionFontSize": "16",
+                "subcaptionFontSize": "14",
+                "subcaptionFontBold": "0",
+                "toolTipColor": "#ffffff",
+                "toolTipBorderThickness": "0",
+                "toolTipBgColor": "#000000",
+                "toolTipBgAlpha": "80",
+                "toolTipBorderRadius": "2",
+                "toolTipPadding": "5",
+                "showHoverEffect": "1",
+                "showLegend": "1",
+                "legendBgColor": "#ffffff",
+                "legendBorderAlpha": '0',
+                "legendShadow": '0',
+                "legendItemFontSize": '14',
+                "legendItemFontColor": '#666666',
+                "theme": "fint"
+            }
+        };
+
+        dataObjectPei.push(data);
+        dataSourcePei.data = dataObjectPei;
+
+        var visitChart = new FusionCharts({
+            type: 'pie3d',
+            renderAt: 'chart-container',
+            width: '100%',
+            height: '500',
+            dataFormat: 'json'
+        });
+        visitChart.setJSONData(dataSourcePei);
+        visitChart.render();
+    }
+    function setPeiChartsCompany(data) {
+        var dataObjectPei = [];
+        var dataSourcePei = {
+            "chart": {
+                "caption": "Manpower Distribution Based on Categories",
+                "subcaption": "BITOPI GROUP",
+                "paletteColors": "#1aaf5d,#d50000,#f2c500,#0075c2,#f45b00",
+                "bgColor": "#ffffff",
+                "numberSuffix": "%",
+                "baseFontSize": '14',
+                "showBorder": "0",
+                "use3DLighting": "0",
+                "boderShadow": "",
+                "enableSmartLabels": "0",
+                "startingAngle": "0",
+                "showPercentValues": "0",
+                "showPercentInTooltip": "0",
+                "decimals": "1",
+                "captionFontSize": "16",
+                "subcaptionFontSize": "14",
+                "subcaptionFontBold": "0",
+                "toolTipColor": "#ffffff",
+                "toolTipBorderThickness": "0",
+                "toolTipBgColor": "#000000",
+                "toolTipBgAlpha": "80",
+                "toolTipBorderRadius": "2",
+                "toolTipPadding": "5",
+                "showHoverEffect": "1",
+                "showLegend": "1",
+                "legendBgColor": "#ffffff",
+                "legendBorderAlpha": '0',
+                "legendShadow": '0',
+                "legendItemFontSize": '14',
+                "legendItemFontColor": '#666666',
+                "theme": "fint"
+            }
+        };
+
+        dataObjectPei.push(data);
+        dataSourcePei.data = dataObjectPei;
+
+        var visitChartCompany = new FusionCharts({
+            type: 'bar3d',
+            renderAt: 'chart-container-company',
+            width: '100%',
+            height: '500',
+            dataFormat: 'json'
+        });
+        visitChartCompany.setJSONData(dataSourcePei);
+        visitChartCompany.render();
+    }
+    ///////////// End of Report FeatureComprehension ////////////
+</script>
+<br />
+<div class="body-content">
+    <div class="container-dash col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-app="appDashboard" ng-controller="DashboardMultiFilterController">
+        <br />
+        <h2 class="" ng-init="openingMultiFilter('all')">
+            <span class="h4 col-lg-12 col-md-12 col-sm-12 col-xs-12 header-border">
+                <label style="margin-right:5px" class="col-lg-2 col-md-3 col-sm-2 col-xs-12"> <i class="glyphicon glyphicon-dashboard"></i> BITOPI GROUP </label>
+                &nbsp;&nbsp;<span class="blue col-lg-2 col-md-2 col-sm-2 col-xs-12"> Budget : {{GpBudget | number:0}} </span>
+                &nbsp;&nbsp;<span class="white col-lg-2 col-md-2 col-sm-2 col-xs-12"> Onroll : {{GpOnroll | number:0}} </span>
+                &nbsp;&nbsp;<span class="green col-lg-2 col-md-2 col-sm-2 col-xs-12"> Present : {{GpPresent | number:0}} </span>
+                &nbsp;&nbsp;<span class="orange col-lg-2 col-md-2 col-sm-2 col-xs-12"> Shortage : {{GpShortage | number:0}} </span>
+                &nbsp;&nbsp;<span class="red col-lg-2 col-md-2 col-sm-2 col-xs-12"> Excess : {{GpExcess | number:0}} </span>
+                &nbsp;&nbsp;<span class="maroon-unit col-lg-2 col-md-3 col-sm-2 col-xs-12"> Avg ExcessCost : {{GpExcessCost | number:0}} </span>
+                &nbsp;&nbsp;<span class="yellow col-lg-2 col-md-2 col-sm-2 col-xs-12"> Unallocated : {{GroupTotalUnallocated}} </span>
+                <span class="pull-right col-lg-5  col-md-12 col-sm-12 col-xs-12 h4" style="padding-top:15px">
+                    <label class="col-lg-2 col-md-2 col-sm-2 col-xs-12 left-right-5px"><input type="radio" ng-model="color.name" value="all" ng-click="ShowMP_DirectDetails($event)"> All </label>
+                    <label class="col-lg-2 col-md-2 col-sm-2 col-xs-12 left-right-5px"> <input type="radio" ng-model="color.name" value="direct" ng-click="ShowMP_DirectDetails($event)"> Direct </label>
+                    <label class="col-lg-2 col-md-2 col-sm-2 col-xs-12 left-right-5px"><input type="radio" ng-model="color.name" value="indirect" ng-click="ShowMP_DirectDetails($event)"> Indirect </label>
+                    <label class="col-lg-2 col-md-2 col-sm-2 col-xs-12 left-right-5px"><input type="radio" ng-model="color.name" value="other" ng-click="ShowMP_DirectDetails($event)"> Other </label>
+                </span>
+            </span>
+
+            <label class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center"> Budget VS Onroll </label>
+            <span ng-init="multiFilterDLLAll()" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4" style="border:solid 1px; border-radius:5px; border-color:#5685ab">
+                <div class="form-group col-md-2">
+                    <label for="CompanyName" class="col-lg-12"> Company Name </label>
+                    <div id="CompanyName" ng-dropdown-multiselect="" options="CompaniesObj" selected-model="CompanyCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4"></div>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="CompanyName" class="col-lg-12"> Division Name </label>
+                    <div ng-dropdown-multiselect="" options="DivisionsObj" selected-model="DivisionCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4 "></div>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="CompanyName" class="col-lg-12"> Unit Name </label>
+                    <div ng-dropdown-multiselect="" options="UnitsObj" selected-model="UnitCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4"></div>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="CompanyName" class="col-lg-12"> Department Name </label>
+                    <div ng-dropdown-multiselect="" options="DepartmentsObj" selected-model="DepartmentCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4"></div>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="SectionName" class="col-lg-12"> Section Name </label>
+                    <div id="SectionName" ng-dropdown-multiselect="" options="SectionsObj" selected-model="SectionCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4"></div>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="SSectionName" class="col-lg-12"> SubSection Name </label>
+                    <div id="SSectionName" ng-dropdown-multiselect="" options="SubSectionsObj" selected-model="SubSectionCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4"></div>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="LineName" class="col-lg-12"> Line Name </label>
+                    <div id="LineName" ng-dropdown-multiselect="" options="LinesObj" selected-model="LineCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4"></div>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-right">
+                    <button class="btn btn-info-agile col-lg-12 col-md-12 col-sm-12 col-xs-12 col-lg-offset-1" value="Update" ng-click="Refresh()">
+                        <i class="glyphicon glyphicon-refresh"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-right">
+                    <button ng-click="filtedByCompanyWithAll()" value="Export to Excel" type="button" class="btn btn-info col-lg-12 col-md-12 col-sm-12 col-xs-12 col-lg-offset-1">
+                        <i class="glyphicon glyphicon-download-alt"></i> Show Data
+                    </button>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-2 col-xs-2 pull-right">
+                    <button type="submit" id="btnPrint" class="btn btn-success btn-flat col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin: 5px">
+                        <i class="glyphicon glyphicon-export"></i>
+                        <a href="~/DashboardMultiFilter/GetExportToExcell" style="color: #ffffff"> Export Excell </a>
+                    </button>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-2 col-xs-32 pull-right">
+                    <input type="date" ng-model="date" date="MM/dd/yyyy" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 date" />
+                </div>
+                <span class="" style="background-color: #d50000">{{UAMessage}}</span>
+            </span>
+        </h2>
+        <br />
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <aside class="accordion col-md-12 col-xs-12">
+                <table id="example" class="table table-condensed table-bordered table-striped text-center" style="font-weight:bold">
+                    <tr>
+                        <th> Sr. </th>
+                        <th> Company </th>
+                        <th> Division </th>
+                        <th> Unit </th>
+                        <th> Department </th>
+                        <th> Section </th>
+                        <th> SubSection </th>
+                        <th> Line </th>
+                        <th> Budget </th>
+                        <th> Onroll </th>
+                        <th> Present </th>
+                        <th> Shortage </th>
+                        <th> Excess </th>
+                        <th> ExcessCost </th>
+                        <th> Unallocated </th>
+                        @*<th class="text-center" ng-repeat="(sh, sv) in Companies[0]">{{sh}}</th>*@
+                    </tr>
+                    <tr ng-repeat="_c in Companies | orderBy : 'Designation'">
+                        <td>{{ $index+1 }}</td>
+                        <td>{{_c.Company }}</td>
+                        <td>{{_c.Division }}</td>
+                        <td>{{_c.Unit }}</td>
+                        <td>{{_c.Department }}</td>
+                        <td>{{_c.Section }}</td>
+                        <td>{{_c.SubSection }}</td>
+                        <td>{{_c.Line}}</td>
+                        <td class="blue">{{_c.Budget | number:0}}</td>
+                        <td class="white">
+                            <input type="hidden" ng-model="_c" value="{{_c}}" />
+                            <span ng-click="openOnrollEmpDetails(_c,'Onroll')" class="btn btn-danger" style="background-color: maroon; padding: 0px 5px 0px 5px; font-weight: bold; font-size: 2rem">
+                                {{_c.Onroll | number:0}}
+                            </span>
+                        </td>
+                        <td class="green">
+                            <span ng-click="openOnrollEmpDetails(_c,'Present')" class="btn btn-danger" style="background-color: maroon; padding: 0px 5px 0px 5px; font-weight: bold; font-size: 2rem">
+                                {{_c.Present | number:0}}
+                            </span>
+
+                        </td>
+                        <td class="orange">{{_c.Shortage | number:0}}</td>
+                        <td class="red">{{_c.Excess | number:0}}</td>
+                        <td class="maroon-unit">{{_c.ExcessCost | number:0}}</td>
+                        <td class="yellow">{{_c.Unallocated}} <span ng-show="e.Unallocated > 1"> Total: {{e.Unallocated}}</span></td>
+                    </tr>
+                </table>
+                <br />
+
+            </aside>
+            <div class="row col-lg-12 col-md-12 col-xs-12">
+                <div id="chart-container" class="row col-lg-6 col-md-6 col-xs-12"> </div>
+                <div id="chart-container-company" class="row col-lg-6 col-md-6 col-xs-12"> </div>
+            </div>
+        }
+
+        <br />
+
+        <script type="text/ng-template" id="UnallocatedEmpList_Table">
+
+            <table id="example" class="table table-condensed table-bordered table-striped">
+                <tr>
+                    @*<th><input type="button" sections="exportAction" ng-click="exportAction()" /> </th>*@
+                    <label> {{employees[0].CompanyName}} || Total: {{employees.length}}</label>
+                </tr>
+                <tr>
+                    <th> Sr. </th>
+                    <th> BudgetCode </th>
+                    <th> EmployeeCode </th>
+                    <th> EmployeeName </th>
+                    <th> Designation </th>
+                    <th> Department </th>
+                    <th> JoningDate </th>
+                    <th> Remarks </th>
+                </tr>
+                <tr ng-repeat="e in employees | orderBy : 'Designation'">
+                    <td>{{ $index+1 }}</td>
+                    <td>{{e.BudgetCode }}</td>
+                    <td>{{e.EmployeeCode }}</td>
+                    <td>{{e.EmployeeName }}</td>
+                    <td>{{e.Designation }}</td>
+                    <td>{{e.Department }}</td>
+                    <td>{{e.JoiningDate | date :  "shortDate" }}</td>
+                    <td>{{e.EmployeeStatus}} <span ng-show="e.Total > 1"> Total: {{e.Total}}</span></td>
+                    @*<td type="hidden" ng-model="comname">{{e.CompanyName}}</td>*@
+                </tr>
+            </table>
+            <span class="red">{{UAMessage}}</span>
+
+        </script>
+        <script type="text/ng-template" id="OnrollEmpList">
+            <table id="example" class="table table-condensed table-bordered table-striped">
+                <tr>
+                    <label> {{employees[1].CompanyName}} || Total: {{employees.length}} || {{EmpOnrollorPresent}} Manpower Distribution</label>
+                </tr>
+                <tr>
+                    <th> Sr. </th>
+                    <th> BudgetCode </th>
+                    <th> EmployeeID </th>
+                    <th> EmployeeName </th>
+                    <th> Designation </th>
+                    <th> JoiningDate </th>
+                    @*<th> Line </th>*@
+                    <th> Remarks </th>
+                </tr>
+                <tr ng-repeat="e in employees | orderBy : 'DesignationId'">
+                    <td>{{ $index+1 }}</td>
+                    <td>{{e.BudgetCode }}</td>
+                    <td>{{e.EmployeeCode }}</td>
+                    <td>{{e.EmployeeName }}</td>
+                    <td>{{e.Designation }}</td>
+                    <td>{{e.JoiningDate | date:'dd-MMM-yyyy'}}</td>
+                    @*<td>{{e.Line }}</td>*@
+                    <td>{{e.EmployeeStatus}} </td>
+                </tr>
+            </table>
+            <span class="red">{{DtailsMessage}}</span>
+        </script>
+        <script type="text/ng-template" id="ExEmpList">
+
+            <table id="example" class="table table-condensed table-bordered table-striped">
+                <tr>
+                    <label> {{Exemployees[1].CompanyName}} || Total: {{Exemployees.length}} || Allocated Manpower Distribution</label>
+                </tr>
+                <tr>
+                    <th> Sr. </th>
+                    <th> BudgetCode </th>
+                    <th> EmployeeCode </th>
+                    <th> EmployeeName </th>
+                    <th> Designation </th>
+                    <th> Department </th>
+                    <th> JoiningDate </th>
+                    <th> Remarks </th>
+                </tr>
+                <tr ng-repeat="e in Exemployees | orderBy : 'Designation'">
+                    <td>{{ $index+1 }}</td>
+                    <td>{{e.BudgetCode }}</td>
+                    <td>{{e.EmployeeCode }}</td>
+                    <td>{{e.EmployeeName }}</td>
+                    <td>{{e.Designation }}</td>
+                    <td>{{e.Department }}</td>
+                    <td>{{e.JoiningDate | date:'dd-MMM-yyyy'}}</td>
+                    <td>{{e.EmployeeStatus}} </td>
+                </tr>
+
+            </table>
+
+        </script>
+        <script type="text/ng-template" id="Validation_DepartmentList">
+            <table style="margin-top: 0px !important;" class="table table-condensed table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <label> {{depts[1].CompanyName}}{{depts[0].CompanyCode}} || Total Departments: {{departments.length}} || Onroll Manpower Distribution </label>
+                    </tr>
+                </thead>
+                <thead>
+                    <tr>
+                        <th class=""> Sr. </th>
+                        <th class=""> DeptName </th>
+                        <th class=""> Budget </th>
+                        <th class=""> Onroll </th>
+                        <th class=""> Short </th>
+                        <th class=""> Ex </th>
+                        <th class=""> Sections </th>
+                        @*<th ng-repeat="c in cols">{{c}}</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="dept in departments">
+                        <td>{{$index+1}} </td>
+                        <td ng-repeat="sections in dept" ng-init="isArr = isArray(sections)">
+                            <table ng-if="isArr" class="table table-condensed table-bordered table-striped" style="margin-bottom:0px">
+                                <thead>
+                                    <tr>
+                                        <th><button style="width: 20px;" ng-click="expanded = !expanded" expand><span ng-bind="expanded ? '-' : '+'"></span></button></th>
+                                        <th ng-repeat="(sh, sv) in sections[0]">{{sh}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="section in sections" ng-show="expanded">
+                                        <td> {{$index+1}}</td>
+                                        <td ng-repeat="subsections in section" ng-init="isArr = isArray(subsections)">
+
+                                            <table ng-if="isArr" class="table table-condensed table-bordered table-striped" style="margin-bottom:0px">
+                                                <thead>
+                                                    <tr>
+                                                        <td> <button style="width: 20px;" ng-click="expandedss = !expandedss" expand><span ng-bind="expandedss ? '-' : '+'"></span></button> </td>
+                                                        <th ng-repeat="(sj, ssv) in subsections[0]">{{sj}} </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="subs in subsections" ng-show="expandedss">
+                                                        <td> {{$index+1}}</td>
+                                                        <td ng-if="isArr" ng-repeat="subsv in subs" ng-init="isArr = isArray(subsv)">
+
+                                                            <table ng-if="isArr" class="table table-condensed table-bordered table-striped" style="margin-bottom:0px">
+                                                                <tbody>
+                                                                    <tr ng-repeat="lines in subsv" ng-show="expandedss">
+
+                                                                        <td ng-repeat="line in lines" ng-init="isArr = isArray(line)" class="blueviolet" ng-show="0" ng-if="isArr"> {{line}}_ </td>
+                                                                        <td>
+                                                                            <input type="hidden" ng-model="lines" value="{{lines}}" />
+                                                                            <button name="" class="btn btn-info btn-xs" style="width: 100px;" ng-click="ShowLineDetails(lines)"> Details </button>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <span ng-if="!isArr">{{subsv}}</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <span ng-if="!isArr">{{subsections}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <span ng-if="!isArr">{{sections}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <span class="red">{{Message}}</span>
+        </script>
+        <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;top: 0px; width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); z-index: 30001; opacity: .8; filter: alpha(opacity=70);display:none">
+            <p style="position: absolute; top: 30%; left: 45%; color: White;">
+                Loading, please wait...<img src="~/Content/Configuration/image/ajax-loading.gif">
+        </div>
+    </div>
+
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<script src="~/Content/Configuration/js/index.js"></script>
+

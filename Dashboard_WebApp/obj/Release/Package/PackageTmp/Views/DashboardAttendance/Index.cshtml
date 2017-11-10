@@ -1,0 +1,608 @@
+﻿
+@{
+    ViewBag.Title = "title";
+    Layout = "~/Views/Shared/_LayoutConfigurationHRF.cshtml";
+}
+
+<script src="~/Content/FusionCharts/fusioncharts.js"></script>
+@*<script src="~/Content/FusionCharts/fusioncharts.widgets.js"></script>*@
+<script src="~/Content/FusionCharts/fusioncharts.charts.js"></script>
+<script src="~/Content/FusionCharts/fusioncharts.theme.fint.js"></script>
+
+<script src="~/Scripts/angular.js"></script>
+<script src="~/Scripts/angular-fusioncharts.min.js"></script>
+<script src="~/Content/Configuration/js/lodash.core.js"></script>
+<script src="~/Content/Configuration/js/lodash.fp.js"></script>
+<script src="~/Content/Configuration/js/lodash.js"></script>
+<script src="~/Content/Configuration/js/mapping.fp.js"></script>
+<script src="~/Content/Configuration/js/angularjs-dropdown-multiselect.js"></script>
+
+
+<script type="text/javascript" src="~/Scripts/ngDialog.js"></script>
+<link href="~/Content/ngDialog.css" rel="stylesheet">
+<link rel="stylesheet" href="~/Content/ngDialog-theme-default.css">
+
+<script src="~/Scripts/angular-resource.js"></script>
+<script src="~/Scripts/angular-route.js"></script>
+<script src="~/App/DashboardMultiFilterController.js"></script>
+<script src="~/App/DashboardAttendanceController.js"></script>
+
+
+<link href="~/Content/Configuration/css/style.css" rel="stylesheet" />
+<link href="http://fonts.googleapis.com/css?family=News+Cycle:400,700" rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+
+
+<link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/css/jquery.dataTables_themeroller.css">
+<link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/jquery.dataTables.min.js"></script>
+
+
+<link href="~/Content/datepicker3.min.css" rel="stylesheet" />
+<link href="~/Content/datepicker.min.css" rel="stylesheet" />
+<script src="~/Content/bootstrap-datepicker.min.js"></script>
+
+<style type="text/css">
+    .multiselect-container {
+        height: 200px;
+        overflow-x: hidden;
+        /*overflow-y: scroll;*/
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#datePicker').datepicker({ format: 'mm/dd/yyyy' });
+    });
+</script>
+
+<script type="text/javascript">
+    //FusionCharts.ready(function () {
+    function loadCharts() {
+        var url = window.location.origin;
+        var calltrue = false;
+        var data2 = [];
+        var categories = [];
+        var objArrayPresent = [];
+        var objArrayLeave = [];
+        var objArrayAbsent = [];
+        var objArrayLate = [];
+
+        FusionCharts.ready(function () {
+            if (calltrue === false) {
+                $.ajax({
+                    url: url + "/DashboardAttendance/GetPeiChartsData",
+                    dataType: "json",
+                    success: function (data) {
+                        var getReportDataObj = function (data) {
+                            $.each(data, function (key, value) {
+                                
+                                var peidata = { label: value.Department, value: value.Present }
+                                data2.push(peidata);
+
+                                var category = { label: value.Department };
+                                    categories.push(category);
+
+                                    var present = { value: value.Present };
+                                    objArrayPresent.push(present);
+
+                                    var leave = { value: value.Leave };
+                                    objArrayLeave.push(leave);
+
+                                    var absent = { value: value.Absent };
+                                    objArrayAbsent.push(absent);
+
+                                    var late = { value: value.Late }; 
+                                    objArrayLate.push(late);
+                            });
+                            //setPeiCharts(data2);
+                            setPeiChartsCompany(data3, categories, objArrayPresent, objArrayLeave, objArrayAbsent, objArrayLate);
+                        };
+                        getReportDataObj(data);
+                    },
+                    error: function (data) { alert(data.message); }
+                });
+            }
+        });
+    };
+    ///////////// End of Report ReqDecompositionRate ////////////
+
+    function setPeiCharts(data) {
+        var dataObjectPei = [];
+        var dataSourcePei = {
+            "chart": {
+                "caption": "Manpower Distribution Based on Categories",
+                "subcaption": "BITOPI GROUP",
+                "paletteColors": "#1aaf5d,#ca3800,#d50000,#f2c500,#0075c2,#f45b00",
+                "bgColor": "#ffffff",
+                "numberSuffix": "%",
+                "baseFontSize": '14',
+                "showBorder": "0",
+                "use3DLighting": "1",
+                "showShadow": "1",
+                "enableSmartLabels": "0",
+                "startingAngle": "0",
+                "showPercentValues": "0",
+                "showPercentInTooltip": "0",
+                "decimals": "1",
+                "captionFontSize": "16",
+                "subcaptionFontSize": "14",
+                "subcaptionFontBold": "0",
+                "toolTipColor": "#ffffff",
+                "toolTipBorderThickness": "0",
+                "toolTipBgColor": "#000000",
+                "toolTipBgAlpha": "80",
+                "toolTipBorderRadius": "2",
+                "toolTipPadding": "5",
+                "showHoverEffect": "1",
+                "showLegend": "1",
+                "legendBgColor": "#ffffff",
+                "legendBorderAlpha": '0',
+                "legendShadow": '0',
+                "legendItemFontSize": '14',
+                "legendItemFontColor": '#666666',
+                "theme": "fint"
+            }
+        };
+
+        dataObjectPei.push(data);
+        dataSourcePei.data = dataObjectPei;
+
+        var visitChart = new FusionCharts({
+            type: 'pie3d',
+            renderAt: 'chart-container',
+            width: '100%',
+            height: '500',
+            dataFormat: 'json'
+        });
+        visitChart.setJSONData(dataSourcePei);
+        visitChart.render();
+    }
+    function setPeiChartsCompany(data, categories, objArrayPresent, objArrayLeave, objArrayAbsent, objArrayLate) {
+        var dataset = []; 
+        var dataSourcePei = {
+            "chart": {
+                "caption": "Daily Attendance Based On Department",
+                "subcaption": "BITOPI GROUP",
+                "paletteColors": "#1aaf5d,#ca3800,#d50000,#f2c500,#0075c2,#f45b00",
+                "bgColor": "#ffffff",
+                //"numberSuffix": "%",
+                "baseFontSize": '14',
+                "showBorder": "0",
+                "use3DLighting": "1",
+                "boderShadow": "",
+                "enableSmartLabels": "0",
+                "startingAngle": "0",
+                "showPercentValues": "0",
+                "showPercentInTooltip": "0",
+                "decimals": "1",
+                "captionFontSize": "16",
+                "subcaptionFontSize": "14",
+                "subcaptionFontBold": "0",
+                "toolTipColor": "#ffffff",
+                "toolTipBorderThickness": "0",
+                "toolTipBgColor": "#000000",
+                "toolTipBgAlpha": "80",
+                "toolTipBorderRadius": "2",
+                "toolTipPadding": "5",
+                "showHoverEffect": "1",
+                "showLegend": "1",
+                "legendBgColor": "#ffffff",
+                "legendBorderAlpha": '0',
+                "legendShadow": '0',
+                "legendItemFontSize": '14',
+                "legendItemFontColor": '#666666',
+                "theme": "fint"
+            }
+            //"categories": [
+            //                {
+            //                    "category": [
+            //                                    {
+            //                                        "label": "Bakersfield Central"
+            //                                    },
+            //                                    {
+            //                                        "label": "Garden Groove harbour"
+            //                                    },
+            //                                    {
+            //                                        "label": "Los Angeles Topanga"
+            //                                    },
+            //                                    {
+            //                                        "label": "Compton-Rancho Dom"
+            //                                    },
+            //                                    {
+            //                                        "label": "Daly City Serramonte"
+            //                                    }
+            //                    ]
+            //                }
+            //],
+            //"dataset": [
+            //    {
+            //        "seriesname": "Food Products",
+            //        "data": [
+            //            {
+            //                "value": "17000"
+            //            },
+            //            {
+            //                "value": "19500"
+            //            },
+            //            {
+            //                "value": "12500"
+            //            },
+            //            {
+            //                "value": "14500"
+            //            },
+            //            {
+            //                "value": "17500"
+            //            }
+            //        ]
+            //    },
+            //    {
+            //        "seriesname": "Non-Food Products",
+            //        "data": [
+            //            {
+            //                "value": "25400"
+            //            },
+            //            {
+            //                "value": "29800"
+            //            },
+            //            {
+            //                "value": "21800"
+            //            },
+            //            {
+            //                "value": "19500"
+            //            },
+            //            {
+            //                "value": "11500"
+            //            }
+            //        ]
+            //    },
+            //    {
+            //        "seriesname": "Sami-Food Products",
+            //        "data": [
+            //            {
+            //                "value": "26400"
+            //            },
+            //            {
+            //                "value": "27800"
+            //            },
+            //            {
+            //                "value": "20800"
+            //            },
+            //            {
+            //                "value": "18500"
+            //            },
+            //            {
+            //                "value": "10500"
+            //            }
+            //        ]
+            //    }
+            //]
+        }
+        
+        dataSourcePei.categories = { "category": categories };
+        dataset[0] = { "seriesname": "Present", "data": objArrayPresent };
+        dataset[1] = { "seriesname": "Leave", "data": objArrayLeave };
+        dataset[2] = { "seriesname": "Absent", "data": objArrayAbsent };
+        dataset[3] = { "seriesname": "Late", "data": objArrayLate };
+        dataSourcePei.dataset = dataset;
+
+        var visitChartCompany = new FusionCharts({
+            type: 'mscolumn3d',//'bar3d',
+            renderAt: 'chart-container-company',
+            width: '100%',
+            height: '500',
+            dataFormat: 'json'
+        });
+        visitChartCompany.setJSONData(dataSourcePei);
+        visitChartCompany.render();
+    }
+    ///////////// End of Report FeatureComprehension ////////////
+</script>
+<br />
+<div class="body-content">
+    <div class="container-dash col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-app="appDashboard" ng-controller="DashboardAttendanceController">
+
+        <h2 ng-init="openingMultiFilter('all')">
+
+            <label class="col-lg-12 col-md-4 col-sm-12 col-xs-12 text-center"> Daily Attendance </label>
+            <span ng-init="multiFilterDLLAll()" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4" style="border:solid 1px; border-radius:5px; border-color:#5685ab">
+                <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                    <label for="CompanyName" class="col-lg-12"> Company </label>
+                    <div id="CompanyName" ng-dropdown-multiselect="" options="CompaniesObj" selected-model="CompanyCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4"></div>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                    <label for="" class="col-lg-12"> Dept Name </label>
+                    <div ng-dropdown-multiselect="" options="DepartmentsObj" selected-model="DepartmentCode" extra-settings="example200settings" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 h4"></div>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12 pull-right">
+                    <label for="" class="col-lg-12" style="height: 19px;">  </label>
+                    <button class="btn btn-info-agile col-lg-12 col-md-12 col-sm-12 col-xs-12 col-lg-offset-1" value="Update" ng-click="Refresh()" style="margin-top: 10px">
+                        <i class="glyphicon glyphicon-refresh"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12 pull-right">
+                    <label for="" class="col-lg-12" style="height: 19px;">  </label>
+                    <button type="submit" id="btnPrint" class="btn btn-success btn-flat col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin: 10px">
+                        <i class="glyphicon glyphicon-export"></i>
+                        <a href="~/DashboardAttendance/GetExportToExcell" style="color: #ffffff"> Export Excell </a>
+                    </button>
+                </div>
+
+                <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12 pull-right">
+                    <label for="" class="col-lg-12" style="height: 19px;">  </label>
+                    <button onclick="loadCharts()" ng-click="filtedByCompanyWithAll()" value="Export to Excel" type="button" class="btn btn-info col-lg-12 col-md-12 col-sm-12 col-xs-12 col-lg-offset-1" style="margin-top: 10px">
+                        <i class="glyphicon glyphicon-download-alt"></i> Show Data
+                    </button>
+                </div>
+                <div class="form-group col-lg-2 col-md-2 col-sm-12 col-xs-12 pull-right">
+                    <label for="" class="col-lg-12"> Date </label>
+                    <div class="input-group input-append date col-lg-12 col-md-12 col-sm-12 col-xs-12" id="datePicker" style="padding-left: 0;padding-top: 5px;">
+                        <input type="text" name="date" ng-model="date" placeholder="mm/dd/yyyy" style="left: 13px;height: 35.2px;" class="form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" />
+                        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                </div>
+
+                <span class="" style="background-color: #d50000">{{UAMessage}}</span>
+            </span>
+        </h2>
+        <br />
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <aside class="accordion col-md-12 col-xs-12">
+                <table id="example" class="table table-condensed table-bordered table-striped text-center" style="font-weight:bold">
+                    <tr>
+                        <th style="text-align:center"> Sr. </th>
+                        <th style="text-align:center"> Company </th>
+                        <th style="text-align:center"> Dept </th>
+                        <th style="text-align:center"> Total </th>
+                        <th style="text-align:center"> Present </th>
+                        <th style="text-align:center"> Leave </th>
+                        <th style="text-align:center"> Absent </th>
+                        <th style="text-align:center"> Late </th>
+                    </tr>
+                    <tr ng-repeat="_c in Companies | orderBy : 'Department'">
+                        <td>{{ $index+1 }}</td>
+                        <td>{{_c.Company }}</td>
+                        <td>{{_c.Department }}</td>
+                        <td class="blue" style="background-color: #0c0c4e">
+                            <span ng-click="openAttendanceEmployeeDetails(_c,'Total')" class="btn btn-danger" style="background-color: #010130; padding: 0px 5px 0px 5px; font-weight: bold; font-size: 2rem">
+                                {{_c.Onroll | number:0}}
+                            </span>
+                        </td>
+                        <td class="green">
+                            <span ng-click="openAttendanceEmployeeDetails(_c,'Present')" class="btn btn-danger" style="background-color: #045013; padding: 0px 5px 0px 5px; font-weight: bold; font-size: 2rem">
+                                {{_c.Present | number:0}}
+                            </span>
+                        </td>
+                        <td class="orange">
+                            <span ng-click="openAttendanceEmployeeDetails(_c,'Leave')" class="btn btn-danger" style="background-color: #8e2903; padding: 0px 5px 0px 5px; font-weight: bold; font-size: 2rem">
+                                {{_c.Leave | number:0}}
+                            </span>
+                        </td>
+                        <td class="red">
+                            <span ng-click="openAttendanceEmployeeDetails(_c,'Absent')" class="btn btn-danger" style="background-color: #8e2903; padding: 0px 5px 0px 5px; font-weight: bold; font-size: 2rem">
+                                {{_c.Absent | number:0}}
+                            </span>
+                        </td>
+                        <td class="yellow" style="background-color: #c5c504">
+                            <span ng-click="openAttendanceEmployeeDetails(_c,'Late')" class="btn btn-danger" style="background-color: #8e2903; padding: 0px 5px 0px 5px; font-weight: bold; font-size: 2rem">
+                                {{_c.Late | number:0}}
+                            </span>
+                        </td>
+                        @*<td class="">
+                            <span ng-click="openAttendanceCharts(_c,'Chart')" class="btn btn-danger">
+                                <i class="glyphicon glyphicon-dashboard"></i>
+                            </span>
+                        </td>*@
+                    </tr>
+                </table>
+                <br />
+            </aside>
+            <div class="row col-lg-12 col-md-12 col-xs-12">
+                @*<div id="chart-container" class="row col-lg-6 col-md-6 col-xs-12"> </div>*@
+                <div id="chart-container-company" class="row col-lg-12 col-md-12 col-xs-12"> </div>
+            </div>
+        }
+
+        <br />
+
+        <script type="text/ng-template" id="UnallocatedEmpList_Table">
+
+            <table id="example" class="table table-condensed table-bordered table-striped">
+                <tr>
+                    @*<th><input type="button" sections="exportAction" ng-click="exportAction()" /> </th>*@
+                    <label> {{employees[0].CompanyName}} || Total: {{employees.length}}</label>
+                </tr>
+                <tr>
+                    <th> Sr. </th>
+                    <th> BudgetCode </th>
+                    <th> EmployeeCode </th>
+                    <th> EmployeeName </th>
+                    <th> Designation </th>
+                    <th> Department </th>
+                    <th> JoningDate </th>
+                    <th> Remarks </th>
+                </tr>
+                <tr ng-repeat="e in employees | orderBy : 'Designation'">
+                    <td>{{ $index+1 }}</td>
+                    <td>{{e.BudgetCode }}</td>
+                    <td>{{e.EmployeeCode }}</td>
+                    <td>{{e.EmployeeName }}</td>
+                    <td>{{e.Designation }}</td>
+                    <td>{{e.Department }}</td>
+                    <td>{{e.JoiningDate | date :  "shortDate" }}</td>
+                    <td>{{e.EmployeeStatus}} <span ng-show="e.Total > 1"> Total: {{e.Total}}</span></td>
+                    @*<td type="hidden" ng-model="comname">{{e.CompanyName}}</td>*@
+                </tr>
+            </table>
+            <span class="red">{{UAMessage}}</span>
+
+        </script>
+        <script type="text/ng-template" id="PresentEmployeeList">
+            <table id="example" class="table table-condensed table-bordered table-striped">
+                <tr>
+                    <label> {{employees[1].CompanyName}} || Total: {{employees.length}} || {{EmpOnrollorPresent}} Manpower Details</label>
+                </tr>
+                <tr>
+                    <th> Sr. </th>
+                    <th> BudgetCode </th>
+                    <th> EmployeeID </th>
+                    <th> EmployeeName </th>
+                    <th> Designation </th>
+                    <th> JoiningDate </th>
+                    @*<th> Line </th>*@
+                    <th> Remarks </th>
+                </tr>
+                <tr ng-repeat="e in employees | orderBy : 'DesignationId'">
+                    <td>{{ $index+1 }}</td>
+                    <td>{{e.BudgetCode }}</td>
+                    <td>{{e.EmployeeCode }}</td>
+                    <td>{{e.EmployeeName }}</td>
+                    <td>{{e.Designation }}</td>
+                    <td>{{e.JoiningDate | date:'dd-MMM-yyyy'}}</td>
+                    @*<td>{{e.Line }}</td>*@
+                    <td>{{e.EmployeeStatus}} </td>
+                </tr>
+            </table>
+            <span class="red">{{DtailsMessage}}</span>
+        </script>
+        <script type="text/ng-template" id="Attendance_Details_Chart">
+            <label> Employee Attendance Details</label>
+
+            <div class="row col-lg-12 col-md-12 col-xs-12">
+                <div id="chart-container" class="row col-lg-6 col-md-6 col-xs-12"> </div>
+                <div id="chart-container-company" class="row col-lg-6 col-md-6 col-xs-12"> </div>
+            </div>
+            <span class="red">{{DtailsMessage}}</span>
+
+        </script>
+        <script type="text/ng-template" id="ExEmpList">
+
+            <table id="example" class="table table-condensed table-bordered table-striped">
+                <tr>
+                    <label> {{Exemployees[1].CompanyName}} || Total: {{Exemployees.length}} || Allocated Manpower Distribution</label>
+                </tr>
+                <tr>
+                    <th> Sr. </th>
+                    <th> BudgetCode </th>
+                    <th> EmployeeCode </th>
+                    <th> EmployeeName </th>
+                    <th> Designation </th>
+                    <th> Department </th>
+                    <th> JoiningDate </th>
+                    <th> Remarks </th>
+                </tr>
+                <tr ng-repeat="e in Exemployees | orderBy : 'Designation'">
+                    <td>{{ $index+1 }}</td>
+                    <td>{{e.BudgetCode }}</td>
+                    <td>{{e.EmployeeCode }}</td>
+                    <td>{{e.EmployeeName }}</td>
+                    <td>{{e.Designation }}</td>
+                    <td>{{e.Department }}</td>
+                    <td>{{e.JoiningDate | date:'dd-MMM-yyyy'}}</td>
+                    <td>{{e.EmployeeStatus}} </td>
+                </tr>
+
+            </table>
+
+        </script>
+        <script type="text/ng-template" id="Validation_DepartmentList">
+            <table style="margin-top: 0px !important;" class="table table-condensed table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <label> {{depts[1].CompanyName}}{{depts[0].CompanyCode}} || Total Departments: {{departments.length}} || Onroll Manpower Distribution </label>
+                    </tr>
+                </thead>
+                <thead>
+                    <tr>
+                        <th class=""> Sr. </th>
+                        <th class=""> DeptName </th>
+                        <th class=""> Budget </th>
+                        <th class=""> Onroll </th>
+                        <th class=""> Short </th>
+                        <th class=""> Ex </th>
+                        <th class=""> Sections </th>
+                        @*<th ng-repeat="c in cols">{{c}}</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="dept in departments">
+                        <td>{{$index+1}} </td>
+                        <td ng-repeat="sections in dept" ng-init="isArr = isArray(sections)">
+                            <table ng-if="isArr" class="table table-condensed table-bordered table-striped" style="margin-bottom:0px">
+                                <thead>
+                                    <tr>
+                                        <th><button style="width: 20px;" ng-click="expanded = !expanded" expand><span ng-bind="expanded ? '-' : '+'"></span></button></th>
+                                        <th ng-repeat="(sh, sv) in sections[0]">{{sh}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="section in sections" ng-show="expanded">
+                                        <td> {{$index+1}}</td>
+                                        <td ng-repeat="subsections in section" ng-init="isArr = isArray(subsections)">
+
+                                            <table ng-if="isArr" class="table table-condensed table-bordered table-striped" style="margin-bottom:0px">
+                                                <thead>
+                                                    <tr>
+                                                        <td> <button style="width: 20px;" ng-click="expandedss = !expandedss" expand><span ng-bind="expandedss ? '-' : '+'"></span></button> </td>
+                                                        <th ng-repeat="(sj, ssv) in subsections[0]">{{sj}} </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="subs in subsections" ng-show="expandedss">
+                                                        <td> {{$index+1}}</td>
+                                                        <td ng-if="isArr" ng-repeat="subsv in subs" ng-init="isArr = isArray(subsv)">
+
+                                                            <table ng-if="isArr" class="table table-condensed table-bordered table-striped" style="margin-bottom:0px">
+                                                                <tbody>
+                                                                    <tr ng-repeat="lines in subsv" ng-show="expandedss">
+
+                                                                        <td ng-repeat="line in lines" ng-init="isArr = isArray(line)" class="blueviolet" ng-show="0" ng-if="isArr"> {{line}}_ </td>
+                                                                        <td>
+                                                                            <input type="hidden" ng-model="lines" value="{{lines}}" />
+                                                                            <button name="" class="btn btn-info btn-xs" style="width: 100px;" ng-click="ShowLineDetails(lines)"> Details </button>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <span ng-if="!isArr">{{subsv}}</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <span ng-if="!isArr">{{subsections}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <span ng-if="!isArr">{{sections}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <span class="red">{{Message}}</span>
+        </script>
+        <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;top: 0px; width: 100%; height: 100%; background-color: rgba(0, 0, 0, .5); z-index: 30001; opacity: .8; filter: alpha(opacity=70);display:none">
+            <p style="position: absolute; top: 30%; left: 45%; color: White;">
+                Loading, please wait...<img src="~/Content/Configuration/image/ajax-loading.gif">
+        </div>
+    </div>
+
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<script src="~/Content/Configuration/js/index.js"></script>
+
+
